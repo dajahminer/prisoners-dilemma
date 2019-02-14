@@ -1,37 +1,58 @@
 --------------------------------------------------------------------------------
 Section 0 - Line up
 --------------------------------------------------------------------------------
-Player 0 (P0): E0, Collude
-        Always collude.
-Player 1 (P1): E1, Betray
-        Always betray.
-Player 2 (P2): E2, Alternate
-        Collude, then alternate.
-Player 3 (P3): E3, Collude but retaliate
+Player 0 (P0): E5, Collude first 100 rounds unless betrayed. Betray 101st round forward.
+        Betray if ever betrayed.
+        If I haven't been betrayed yet, I'll betray starting with the 100th roun
+        d.
+Player 1 (P1): E3, Collude but retaliate
         Collude first round. Collude, except in a round after getting 
         a severe punishment.
+Player 2 (P2): D9, betray
+        betray,alternate then Collude.
+Player 3 (P3): E2, Alternate
+        Collude, then alternate.
+Player 4 (P4): E6, Collude until betrayed
+        Collude first round. Collude, unless betrayed; then always betray.
+Player 5 (P5): E7, Error
+        return '', ' ', or int 4
+Player 6 (P6): E1, Betray
+        Always betray.
+Player 7 (P7): E4, Use early history
+        Collude first round. Compare all rounds to the previous round and 
+        assume opponent will behave the same as the first time the previous 
+        round's result occurred. If the previous round's result never has 
+        happened, collude except after being severly punished.
 --------------------------------------------------------------------------------
 Section 1 - Player vs. Player
 --------------------------------------------------------------------------------
 Each column shows pts/round earned against each other player:
-             P0     P1     P2     P3
-vs. P0 :      0    100     50      0
-vs. P1 :   -500      0   -375   -376
-vs. P2 :   -249    -75      0   -198
-vs. P3 :      0    -74   -198      0
-TOTAL  :   -749    -49   -524   -574
+             P0     P1     P2     P3     P4     P5     P6     P7
+vs. P0 :      0   -109   -236   -371    -79   -250   -247    -87
+vs. P1 :    -20      0    -70   -197      0   -250    -75      0
+vs. P2 :   -240   -357      0   -359   -242   -250   -239   -245
+vs. P3 :    -77   -201    -81      0    -78   -250    -74   -201
+vs. P4 :    -75      0   -239   -368      0   -250   -247      0
+vs. P5 :   -250   -250   -250   -250   -250      0   -250   -250
+vs. P6 :   -252   -375   -258   -376   -252   -250      0   -253
+vs. P7 :    -79      0   -239   -197      0   -250   -246      0
+TOTAL  :   -994  -1292  -1372  -2118   -901  -1750  -1377  -1036
 --------------------------------------------------------------------------------
 Section 2 - Leaderboard
 --------------------------------------------------------------------------------
 Average points per round:
 Team name (P#):  Score      with strategy name
-E1        (P1):     -12.25 points with Betray                                  
-E2        (P2):     -131.0 points with Alternate                               
-E3        (P3):     -143.5 points with Collude but retaliate                   
-E0        (P0):    -187.25 points with Collude                                 
+E6        (P4):   -112.625 points with Collude until betrayed                  
+E5        (P0):    -124.25 points with Collude first 100 rounds unless betrayed
+E4        (P7):     -129.5 points with Use early history                       
+E3        (P1):     -161.5 points with Collude but retaliate                   
+D9        (P2):     -171.5 points with betray                                  
+E1        (P6):   -172.125 points with Betray                                  
+E7        (P5):    -218.75 points with Error                                   
+E2        (P3):    -264.75 points with Alternate                               
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-example0--------------------------------------------------------------------------------
+example5--------------------------------------------------------------------------------
 ####
 # Each team's file must define four tokens:
 #     team_name: a string
@@ -40,9 +61,14 @@ example0------------------------------------------------------------------------
 #     move: A function that returns 'c' or 'b'
 ####
 
-team_name = 'E0'
-strategy_name = 'Collude'
-strategy_description = 'Always collude.'
+team_name = 'E5'
+strategy_name = 'Collude first 100 rounds unless betrayed. Betray 101st round forward.'
+strategy_description = '''\
+Betray if ever betrayed.
+If I haven't been betrayed yet, I'll betray starting with the 100th round.
+'''
+
+import random
     
 def move(my_history, their_history, my_score, their_score):
     '''Make my move based on the history with this player.
@@ -54,65 +80,13 @@ def move(my_history, their_history, my_score, their_score):
     
     Returns 'c' or 'b' for collude or betray.
     '''
-    
-    # This player always colludes.
-    return 'c'
-    --------------------------------------------------------------------------------
-example1--------------------------------------------------------------------------------
-####
-# Each team's file must define four tokens:
-#     team_name: a string
-#     strategy_name: a string
-#     strategy_description: a string
-#     move: A function that returns 'c' or 'b'
-####
-
-team_name = 'E1'
-strategy_name = 'Betray'
-strategy_description = 'Always betray.'
-    
-def move(my_history, their_history, my_score, their_score):
-    '''Make my move based on the history with this player.
-    
-    history: a string with one letter (c or b) per round that has been played with this opponent.
-    their_history: a string of the same length as history, possibly empty. 
-    The first round between these two players is my_history[0] and their_history[0]
-    The most recent round is my_history[-1] and their_history[-1]
-    
-    Returns 'c' or 'b' for collude or betray.
-    '''
-    
-    #This example player always betrays.      
-    return 'b'
---------------------------------------------------------------------------------
-example2--------------------------------------------------------------------------------
-####
-# Each team's file must define four tokens:
-#     team_name: a string
-#     strategy_name: a string
-#     strategy_description: a string
-#     move: A function that returns 'c' or 'b'
-####
-
-team_name = 'E2'
-strategy_name = 'Alternate'
-strategy_description = 'Collude, then alternate.'
-    
-def move(my_history, their_history, my_score, their_score):
-    '''Make my move based on the history with this player.
-    
-    history: a string with one letter (c or b) per round that has been played with this opponent.
-    their_history: a string of the same length as history, possibly empty. 
-    The first round between these two players is my_history[0] and their_history[0]
-    The most recent round is my_history[-1] and their_history[-1]
-    
-    Returns 'c' or 'b' for collude or betray.
-    '''
-    # This player colludes on even numbered rounds (first round is round #0).
-    if len(my_history)%2 == 0:
-        return 'c'
+    # If the other player has betrayed or this is the last half of the game, 
+    if 'b' in their_history or len(their_history)>100: 
+        return 'b'               # Betray.
     else:
-        return 'b'
+        return 'c'         # but 90% of the time collude
+    
+    
     --------------------------------------------------------------------------------
 example3--------------------------------------------------------------------------------
 ####
@@ -145,140 +119,825 @@ def move(my_history, their_history, my_score, their_score):
         return 'b' # Betray if they were severely punished last time,
     else:
         return 'c' # otherwise collude.--------------------------------------------------------------------------------
-Section 3 - Game Data for Team E0
+team2--------------------------------------------------------------------------------
+####
+# Each team's file must define four tokens:
+#     team_name: a string
+#     strategy_name: a string
+#     strategy_description: a string
+#     move: A function that returns 'c' or 'b'
+####
+
+team_name = 'D9' # Only 10 chars displayed.
+strategy_name = 'betray'
+strategy_description = 'betray,alternate then Collude.'
+    
+def move(my_history, their_history, my_score, their_score):
+    ''' Arguments accepted: my_history, their_history are strings.
+    my_score, their_score are ints.
+    
+    Make my move.
+    Returns 'c' or 'b'. 
+    '''
+    if len(my_history) <= 5:
+        return 'c'
+    elif len(my_history) >= 5:
+        return 'b'
+        
+    # my_history: a string with one letter (c or b) per round that has been played with this opponent.
+    # their_history: a string of the same length as history, possibly empty. 
+    # The first round between these two players is my_history[0] and their_history[0].
+    # The most recent round is my_history[-1] and their_history[-1].
+    
+    # Analyze my_history and their_history and/or my_score and their_score.
+    # Decide whether to return 'c' or 'b'.
+    
+
+
+    
+def test_move(my_history, their_history, my_score, their_score, result):
+    '''calls move(my_history, their_history, my_score, their_score)
+    from this module. Prints error if return value != result.
+    Returns True or False, dpending on whether result was as expected.
+    '''
+    real_result = move(my_history, their_history, my_score, their_score)
+    if real_result == result:
+        return True
+    else:
+        print("move(" +
+            ", ".join(["'"+my_history+"'", "'"+their_history+"'",
+                       str(my_score), str(their_score)])+
+            ") returned " + "'" + real_result + "'" +
+            " and should have returned '" + result + "'")
+        return False
+
+if __name__ == '__main__':
+     
+    # Test 1: Betray on first move.
+    if test_move(my_history='',
+              their_history='', 
+              my_score=0,
+              their_score=0,
+              result='b'):
+         print ('Test passed')
+     # Test 2: Continue betraying if they collude despite being betrayed.
+    test_move(my_history='bbb',
+              their_history='ccc', 
+              # Note the scores are for testing move().
+              # The history and scores don't need to match unless
+              # that is relevant to the test of move(). Here,
+              # the simulation (if working correctly) would have awarded 
+              # 300 to me and -750 to them. This test will pass if and only if
+              # move('bbb', 'ccc', 0, 0) returns 'b'.
+              my_score=0, 
+              their_score=0,
+              result='b')             --------------------------------------------------------------------------------
+example2--------------------------------------------------------------------------------
+####
+# Each team's file must define four tokens:
+#     team_name: a string
+#     strategy_name: a string
+#     strategy_description: a string
+#     move: A function that returns 'c' or 'b'
+####
+
+team_name = 'E2'
+strategy_name = 'Alternate'
+strategy_description = 'Collude, then alternate.'
+    
+def move(my_history, their_history, my_score, their_score):
+    '''Make my move based on the history with this player.
+    
+    history: a string with one letter (c or b) per round that has been played with this opponent.
+    their_history: a string of the same length as history, possibly empty. 
+    The first round between these two players is my_history[0] and their_history[0]
+    The most recent round is my_history[-1] and their_history[-1]
+    
+    Returns 'c' or 'b' for collude or betray.
+    '''
+    # This player colludes on even numbered rounds (first round is round #0).
+    if len(my_history)%2 == 0:
+        return 'c'
+    else:
+        return 'b'
+    --------------------------------------------------------------------------------
+example6--------------------------------------------------------------------------------
+####
+# Each team's file must define four tokens:
+#     team_name: a string
+#     strategy_name: a string
+#     strategy_description: a string
+#     move: A function that returns 'c' or 'b'
+####
+
+team_name = 'E6'
+strategy_name = 'Collude until betrayed'
+strategy_description = '''\
+Collude first round. Collude, unless betrayed; then always betray.'''
+    
+def move(my_history, their_history, my_score, their_score):
+    '''Make my move based on the history with this player.
+    
+    history: a string with one letter (c or b) per round that has been played with this opponent.
+    their_history: a string of the same length as history, possibly empty. 
+    The first round between these two players is my_history[0] and their_history[0]
+    The most recent round is my_history[-1] and their_history[-1]
+    
+    Returns 'c' or 'b' for collude or betray.
+    '''
+    if 'b' in their_history:
+        return 'b'
+    else:
+        return 'c'--------------------------------------------------------------------------------
+example7--------------------------------------------------------------------------------
+####
+# Each team's file must define four tokens:
+#     team_name: a string
+#     strategy_name: a string
+#     strategy_description: a string
+#     move: A function that returns 'c' or 'b'
+####
+
+team_name = 'E7'
+strategy_name = 'Error'
+strategy_description = 'return \'\', \' \', or int 4'
+import random
+    
+def move(my_history, their_history, my_score, their_score):
+    '''Make my move based on the history with this player.
+    
+    history: a string with one letter (c or b) per round that has been played with this opponent.
+    their_history: a string of the same length as history, possibly empty. 
+    The first round between these two players is my_history[0] and their_history[0]
+    The most recent round is my_history[-1] and their_history[-1]
+    
+    Returns 'c' or 'b' for collude or betray.
+    '''
+    
+    #This example player always betrays.      
+    return random.choice(['', ' ', 4])
 --------------------------------------------------------------------------------
--500.0 pt/round: E0(P0) "Collude"
-100.0 pt/round: E1(P1) "Betray"
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+example1--------------------------------------------------------------------------------
+####
+# Each team's file must define four tokens:
+#     team_name: a string
+#     strategy_name: a string
+#     strategy_description: a string
+#     move: A function that returns 'c' or 'b'
+####
 
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-
-ccc
-BBB
-
+team_name = 'E1'
+strategy_name = 'Betray'
+strategy_description = 'Always betray.'
+    
+def move(my_history, their_history, my_score, their_score):
+    '''Make my move based on the history with this player.
+    
+    history: a string with one letter (c or b) per round that has been played with this opponent.
+    their_history: a string of the same length as history, possibly empty. 
+    The first round between these two players is my_history[0] and their_history[0]
+    The most recent round is my_history[-1] and their_history[-1]
+    
+    Returns 'c' or 'b' for collude or betray.
+    '''
+    
+    #This example player always betrays.      
+    return 'b'
 --------------------------------------------------------------------------------
--248.5549132947977 pt/round: E0(P0) "Collude"
-49.71098265895954 pt/round: E2(P2) "Alternate"
-CcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCc
-CBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCB
+example4--------------------------------------------------------------------------------
+####
+# Each team's file must define four tokens:
+#     team_name: a string
+#     strategy_name: a string
+#     strategy_description: a string
+#     move: A function that returns 'c' or 'b'
+####
 
-CcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCc
-CBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCB
-
-CcCcCcCcCcCcC
-CBCBCBCBCBCBC
-
+team_name = 'E4'
+strategy_name = 'Use early history'
+strategy_description = '''\
+Collude first round. Compare all rounds to the previous round and 
+assume opponent will behave the same as the first time the previous 
+round's result occurred. If the previous round's result never has 
+happened, collude except after being severly punished.'''
+    
+def move(my_history, their_history, my_score, their_score):
+    '''Make my move based on the history with this player.
+    
+    history: a string with one letter (c or b) per round that has been played with this opponent.
+    their_history: a string of the same length as history, possibly empty. 
+    The first round between these two players is my_history[0] and their_history[0]
+    The most recent round is my_history[-1] and their_history[-1]
+    
+    Returns 'c' or 'b' for collude or betray.
+    '''
+    if len(my_history)==0: # It's the first round: collude
+        return 'c'
+    else:
+        # If there was a previous round just like the last one,
+        # do whatever they did in the round that followed it
+        
+        # Reference last round
+        recent_round_them = their_history[-1]
+        recent_round_me = my_history[-1]
+                    
+        # Look at rounds before that one
+        for round in range(len(my_history)-1):
+            prior_round_them = their_history[round]
+            prior_round_me = my_history[round]
+            # If one matches
+            if (prior_round_me == recent_round_me) and \
+                    (prior_round_them == recent_round_them):
+                return their_history[round]
+        # No match found
+        if my_history[-1]=='c' and their_history[-1]=='b':
+            return 'b' # Betray if they were severely punished last time
+        else:
+            return 'c' # Otherwise collude.--------------------------------------------------------------------------------
+Section 3 - Game Data for Team E5
 --------------------------------------------------------------------------------
-0.0 pt/round: E0(P0) "Collude"
-0.0 pt/round: E3(P3) "Collude but retaliate"
+-20.422535211267604 pt/round: E5(P0) "Collude first 100 rounds unless betrayed. Betray 101st round forward."
+-109.15492957746478 pt/round: E3(P1) "Collude but retaliate"
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbB
+CCCCCCCCCCCCCCCCCCCCCcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbc
 
 --------------------------------------------------------------------------------
+-240.3846153846154 pt/round: E5(P0) "Collude first 100 rounds unless betrayed. Betray 101st round forward."
+-235.76923076923077 pt/round: D9(P2) "betray"
+CCCCCCcbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+CCCCCCBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
 --------------------------------------------------------------------------------
-Section 3 - Game Data for Team E1
+-76.78571428571429 pt/round: E5(P0) "Collude first 100 rounds unless betrayed. Betray 101st round forward."
+-370.66326530612247 pt/round: E2(P3) "Alternate"
+CcBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+CBcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+
+BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+
+BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+
 --------------------------------------------------------------------------------
-100.0 pt/round: E1(P1) "Betray"
--500.0 pt/round: E0(P0) "Collude"
-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+-74.65753424657534 pt/round: E5(P0) "Collude first 100 rounds unless betrayed. Betray 101st round forward."
+-78.76712328767124 pt/round: E6(P4) "Collude until betrayed"
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+CCCCCCCCCCCCCCCCCCCCCBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+CCCCCCCCCCCCCCCCCCCCCcbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+--------------------------------------------------------------------------------
+-250.0 pt/round: E5(P0) "Collude first 100 rounds unless betrayed. Betray 101st round forward."
+-250.0 pt/round: E7(P5) "Error"
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+                                                                                
 
-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-
-BBB
-ccc
+cccccccccccccccccccccbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+                                                            
 
 --------------------------------------------------------------------------------
--75.0 pt/round: E1(P1) "Betray"
--375.0 pt/round: E2(P2) "Alternate"
-BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
-cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+-252.45098039215685 pt/round: E5(P0) "Collude first 100 rounds unless betrayed. Betray 101st round forward."
+-246.5686274509804 pt/round: E1(P6) "Betray"
+cbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+Bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 
-BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
-cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
-
---------------------------------------------------------------------------------
--74.1025641025641 pt/round: E1(P1) "Betray"
--375.64102564102564 pt/round: E3(P3) "Collude but retaliate"
-BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
-cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
-
-BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
-cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
-
-BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbB
-cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbc
+bbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbb
 
 --------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-Section 3 - Game Data for Team E2
---------------------------------------------------------------------------------
-49.71098265895954 pt/round: E2(P2) "Alternate"
--248.5549132947977 pt/round: E0(P0) "Collude"
-CBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCB
-CcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCc
+-79.27631578947368 pt/round: E5(P0) "Collude first 100 rounds unless betrayed. Betray 101st round forward."
+-87.17105263157895 pt/round: E4(P7) "Use early history"
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
-CBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCB
-CcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCcCc
-
-CBCBCBCBCBCBC
-CcCcCcCcCcCcC
-
---------------------------------------------------------------------------------
--375.0 pt/round: E2(P2) "Alternate"
--75.0 pt/round: E1(P1) "Betray"
-cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
-BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
-
-cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
-BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
-
---------------------------------------------------------------------------------
--198.49624060150376 pt/round: E2(P2) "Alternate"
--198.49624060150376 pt/round: E3(P3) "Collude but retaliate"
-CBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
-CcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
-
-cBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
-BcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
+CCCCCCCCCCCCCCCCCCCCCBbBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+CCCCCCCCCCCCCCCCCCCCCcbcbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 Section 3 - Game Data for Team E3
 --------------------------------------------------------------------------------
-0.0 pt/round: E3(P3) "Collude but retaliate"
-0.0 pt/round: E0(P0) "Collude"
+-109.15492957746478 pt/round: E3(P1) "Collude but retaliate"
+-20.422535211267604 pt/round: E5(P0) "Collude first 100 rounds unless betrayed. Betray 101st round forward."
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbc
+CCCCCCCCCCCCCCCCCCCCCBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbB
 
 --------------------------------------------------------------------------------
--375.64102564102564 pt/round: E3(P3) "Collude but retaliate"
--74.1025641025641 pt/round: E1(P1) "Betray"
-cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
-BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+-357.14285714285717 pt/round: E3(P1) "Collude but retaliate"
+-69.74789915966386 pt/round: D9(P2) "betray"
+CCCCCCcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+CCCCCCBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
 
-cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
-BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
-
-cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbc
-BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbB
+cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbc
+BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbB
 
 --------------------------------------------------------------------------------
--198.49624060150376 pt/round: E3(P3) "Collude but retaliate"
--198.49624060150376 pt/round: E2(P2) "Alternate"
+-200.6578947368421 pt/round: E3(P1) "Collude but retaliate"
+-196.71052631578948 pt/round: E2(P3) "Alternate"
 CcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
 CBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
 
-BcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
-cBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
+BcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
+cBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
+
+--------------------------------------------------------------------------------
+0.0 pt/round: E3(P1) "Collude but retaliate"
+0.0 pt/round: E6(P4) "Collude until betrayed"
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+CCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+--------------------------------------------------------------------------------
+-250.0 pt/round: E3(P1) "Collude but retaliate"
+-250.0 pt/round: E7(P5) "Error"
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+                                                                                
+
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+                                                                                
+
+ccccccccccccccccccccccc
+                       
+
+--------------------------------------------------------------------------------
+-375.0 pt/round: E3(P1) "Collude but retaliate"
+-75.0 pt/round: E1(P6) "Betray"
+cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+
+cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+
+--------------------------------------------------------------------------------
+0.0 pt/round: E3(P1) "Collude but retaliate"
+0.0 pt/round: E4(P7) "Use early history"
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+CCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCC
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+Section 3 - Game Data for Team D9
+--------------------------------------------------------------------------------
+-235.76923076923077 pt/round: D9(P2) "betray"
+-240.3846153846154 pt/round: E5(P0) "Collude first 100 rounds unless betrayed. Betray 101st round forward."
+CCCCCCBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+CCCCCCcbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+--------------------------------------------------------------------------------
+-69.74789915966386 pt/round: D9(P2) "betray"
+-357.14285714285717 pt/round: E3(P1) "Collude but retaliate"
+CCCCCCBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+CCCCCCcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+
+BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbB
+cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbc
+
+--------------------------------------------------------------------------------
+-80.71895424836602 pt/round: D9(P2) "betray"
+-359.1503267973856 pt/round: E2(P3) "Alternate"
+CcCcCcBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+CBCBCBcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+
+BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbB
+cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbc
+
+--------------------------------------------------------------------------------
+-238.58024691358025 pt/round: D9(P2) "betray"
+-242.28395061728395 pt/round: E6(P4) "Collude until betrayed"
+CCCCCCBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+CCCCCCcbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bb
+bb
+
+--------------------------------------------------------------------------------
+-250.0 pt/round: D9(P2) "betray"
+-250.0 pt/round: E7(P5) "Error"
+ccccccbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+                                                                                
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+                                                            
+
+--------------------------------------------------------------------------------
+-257.97872340425533 pt/round: D9(P2) "betray"
+-238.82978723404256 pt/round: E1(P6) "Betray"
+ccccccbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+BBBBBBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+--------------------------------------------------------------------------------
+-238.83248730964468 pt/round: D9(P2) "betray"
+-244.9238578680203 pt/round: E4(P7) "Use early history"
+CCCCCCBbBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+CCCCCCcbcbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+Section 3 - Game Data for Team E2
+--------------------------------------------------------------------------------
+-370.66326530612247 pt/round: E2(P3) "Alternate"
+-76.78571428571429 pt/round: E5(P0) "Collude first 100 rounds unless betrayed. Betray 101st round forward."
+CBcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+CcBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+
+cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+
+cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+
+--------------------------------------------------------------------------------
+-196.71052631578948 pt/round: E2(P3) "Alternate"
+-200.6578947368421 pt/round: E3(P1) "Collude but retaliate"
+CBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
+CcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
+
+cBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
+BcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
+
+--------------------------------------------------------------------------------
+-359.1503267973856 pt/round: E2(P3) "Alternate"
+-80.71895424836602 pt/round: D9(P2) "betray"
+CBCBCBcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+CcCcCcBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+
+cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbc
+BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbB
+
+--------------------------------------------------------------------------------
+-368.359375 pt/round: E2(P3) "Alternate"
+-77.734375 pt/round: E6(P4) "Collude until betrayed"
+CBcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+CcBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+
+cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+
+--------------------------------------------------------------------------------
+-250.0 pt/round: E2(P3) "Alternate"
+-250.0 pt/round: E7(P5) "Error"
+cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+                                                                                
+
+cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+                                                                                
+
+cbcbcb
+      
+
+--------------------------------------------------------------------------------
+-375.77639751552795 pt/round: E2(P3) "Alternate"
+-73.91304347826087 pt/round: E1(P6) "Betray"
+cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+
+cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+
+--------------------------------------------------------------------------------
+-197.1590909090909 pt/round: E2(P3) "Alternate"
+-200.5681818181818 pt/round: E4(P7) "Use early history"
+CBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
+CcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
+
+cBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
+BcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
+
+cBcBcBcBcBcBcBcB
+BcBcBcBcBcBcBcBc
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+Section 3 - Game Data for Team E6
+--------------------------------------------------------------------------------
+-78.76712328767124 pt/round: E6(P4) "Collude until betrayed"
+-74.65753424657534 pt/round: E5(P0) "Collude first 100 rounds unless betrayed. Betray 101st round forward."
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+CCCCCCCCCCCCCCCCCCCCCcbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+CCCCCCCCCCCCCCCCCCCCCBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+--------------------------------------------------------------------------------
+0.0 pt/round: E6(P4) "Collude until betrayed"
+0.0 pt/round: E3(P1) "Collude but retaliate"
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+CCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+--------------------------------------------------------------------------------
+-242.28395061728395 pt/round: E6(P4) "Collude until betrayed"
+-238.58024691358025 pt/round: D9(P2) "betray"
+CCCCCCcbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+CCCCCCBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bb
+bb
+
+--------------------------------------------------------------------------------
+-77.734375 pt/round: E6(P4) "Collude until betrayed"
+-368.359375 pt/round: E2(P3) "Alternate"
+CcBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+CBcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+
+BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+
+--------------------------------------------------------------------------------
+-250.0 pt/round: E6(P4) "Collude until betrayed"
+-250.0 pt/round: E7(P5) "Error"
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+                                                                                
+
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+                                                                                
+
+cccccccccccccc
+              
+
+--------------------------------------------------------------------------------
+-252.11864406779662 pt/round: E6(P4) "Collude until betrayed"
+-247.03389830508473 pt/round: E1(P6) "Betray"
+cbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+Bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+--------------------------------------------------------------------------------
+0.0 pt/round: E6(P4) "Collude until betrayed"
+0.0 pt/round: E4(P7) "Use early history"
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+Section 3 - Game Data for Team E7
+--------------------------------------------------------------------------------
+-250.0 pt/round: E7(P5) "Error"
+-250.0 pt/round: E5(P0) "Collude first 100 rounds unless betrayed. Betray 101st round forward."
+                                                                                
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+                                                            
+cccccccccccccccccccccbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+--------------------------------------------------------------------------------
+-250.0 pt/round: E7(P5) "Error"
+-250.0 pt/round: E3(P1) "Collude but retaliate"
+                                                                                
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+                                                                                
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+                       
+ccccccccccccccccccccccc
+
+--------------------------------------------------------------------------------
+-250.0 pt/round: E7(P5) "Error"
+-250.0 pt/round: D9(P2) "betray"
+                                                                                
+ccccccbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+                                                            
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+--------------------------------------------------------------------------------
+-250.0 pt/round: E7(P5) "Error"
+-250.0 pt/round: E2(P3) "Alternate"
+                                                                                
+cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+
+                                                                                
+cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+
+      
+cbcbcb
+
+--------------------------------------------------------------------------------
+-250.0 pt/round: E7(P5) "Error"
+-250.0 pt/round: E6(P4) "Collude until betrayed"
+                                                                                
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+                                                                                
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+              
+cccccccccccccc
+
+--------------------------------------------------------------------------------
+-250.0 pt/round: E7(P5) "Error"
+-250.0 pt/round: E1(P6) "Betray"
+                                                                                
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+                                                                                
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+                                   
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+--------------------------------------------------------------------------------
+-250.0 pt/round: E7(P5) "Error"
+-250.0 pt/round: E4(P7) "Use early history"
+                                                                                
+cc c                                                                            
+
+                    
+                    
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+Section 3 - Game Data for Team E1
+--------------------------------------------------------------------------------
+-246.5686274509804 pt/round: E1(P6) "Betray"
+-252.45098039215685 pt/round: E5(P0) "Collude first 100 rounds unless betrayed. Betray 101st round forward."
+Bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+cbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbb
+
+--------------------------------------------------------------------------------
+-75.0 pt/round: E1(P6) "Betray"
+-375.0 pt/round: E3(P1) "Collude but retaliate"
+BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+
+BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+
+--------------------------------------------------------------------------------
+-238.82978723404256 pt/round: E1(P6) "Betray"
+-257.97872340425533 pt/round: D9(P2) "betray"
+BBBBBBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+ccccccbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+--------------------------------------------------------------------------------
+-73.91304347826087 pt/round: E1(P6) "Betray"
+-375.77639751552795 pt/round: E2(P3) "Alternate"
+BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+
+BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+cbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcb
+
+--------------------------------------------------------------------------------
+-247.03389830508473 pt/round: E1(P6) "Betray"
+-252.11864406779662 pt/round: E6(P4) "Collude until betrayed"
+Bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+cbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+--------------------------------------------------------------------------------
+-250.0 pt/round: E1(P6) "Betray"
+-250.0 pt/round: E7(P5) "Error"
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+                                                                                
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+                                                                                
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+                                   
+
+--------------------------------------------------------------------------------
+-245.59748427672955 pt/round: E1(P6) "Betray"
+-253.14465408805032 pt/round: E4(P7) "Use early history"
+BbBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+cbcbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+Section 3 - Game Data for Team E4
+--------------------------------------------------------------------------------
+-87.17105263157895 pt/round: E4(P7) "Use early history"
+-79.27631578947368 pt/round: E5(P0) "Collude first 100 rounds unless betrayed. Betray 101st round forward."
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+CCCCCCCCCCCCCCCCCCCCCcbcbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+CCCCCCCCCCCCCCCCCCCCCBbBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+--------------------------------------------------------------------------------
+0.0 pt/round: E4(P7) "Use early history"
+0.0 pt/round: E3(P1) "Collude but retaliate"
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+CCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCC
+
+--------------------------------------------------------------------------------
+-244.9238578680203 pt/round: E4(P7) "Use early history"
+-238.83248730964468 pt/round: D9(P2) "betray"
+CCCCCCcbcbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+CCCCCCBbBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+--------------------------------------------------------------------------------
+-200.5681818181818 pt/round: E4(P7) "Use early history"
+-197.1590909090909 pt/round: E2(P3) "Alternate"
+CcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
+CBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
+
+BcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBc
+cBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcBcB
+
+BcBcBcBcBcBcBcBc
+cBcBcBcBcBcBcBcB
+
+--------------------------------------------------------------------------------
+0.0 pt/round: E4(P7) "Use early history"
+0.0 pt/round: E6(P4) "Collude until betrayed"
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+--------------------------------------------------------------------------------
+-250.0 pt/round: E4(P7) "Use early history"
+-250.0 pt/round: E7(P5) "Error"
+cc c                                                                            
+                                                                                
+
+                    
+                    
+
+--------------------------------------------------------------------------------
+-253.14465408805032 pt/round: E4(P7) "Use early history"
+-245.59748427672955 pt/round: E1(P6) "Betray"
+cbcbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+BbBbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 
 --------------------------------------------------------------------------------
